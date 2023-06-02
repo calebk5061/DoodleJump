@@ -8,7 +8,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.awt.Font;
 
 import javax.swing.JButton;
@@ -16,11 +20,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class Frame extends JPanel implements ActionListener, MouseListener, KeyListener {
 	
 	private int numPlat = 1000;
 	private boolean platMove = false;
 	private Platform store = new Platform(180, 700);
+	private int endScore;
 	
 	ArrayList<Platform> list = new ArrayList<Platform>();
 
@@ -100,7 +108,19 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			g.setFont(rFont);
 			g.drawString("Click to Restart Game", 90, 400);
 			
-			g.drawString("Score: " + s.getScore() + "0", 165, 443);
+			endScore = s.getScore() * 10;
+			
+			g.drawString("Score: " + endScore, 165, 443);
+			
+			try {
+				int curr = scan();
+				
+				g.drawString("Highscore: " + curr, 135, 483);
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 		
@@ -128,7 +148,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		int startY = 600;
 		
 		for (int i = 0; i < numPlat; i++) {
-			if (Math.random()<.20) {
+			if (Math.random()<.25) {
 				list.add(new MovingPlatform(startY));
 			} else {
 			list.add(new Platform(startY));
@@ -139,6 +159,13 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	}
 	
 	public void reset() {
+		
+		try {
+			write();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		list.removeAll(list);
 		
@@ -158,6 +185,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		}
 		
 		d.setXY(225, 650);
+		
 		
 		s.setScore(0);
 		s.setX(420);
@@ -244,6 +272,30 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+		
+	public void write() throws IOException{
+		
+		FileWriter writer = new FileWriter("highscores.txt", true);
+		
+		writer.append(endScore + " ");
+		
+		//always close files after you are done
+		writer.close();
+		
+	}
+	
+	public int scan() throws FileNotFoundException {
+		
+		Scanner scanner = new Scanner(new File("highscores.txt"));
+		
+		String line = scanner.nextLine();
+		
+		// break up the line into individual Strings
+		String[] individual = line.split(" ");
+				
+		return Integer.parseInt(individual[individual.length - 1]);
+
 	}
 
 }

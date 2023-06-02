@@ -11,7 +11,7 @@ public class MovingPlatform extends Platform{
 		}
 		
 		changePicture("/imgs/blue.png");
-		System.out.println(vx);
+		//System.out.println(vx);
 	}
 
 }
